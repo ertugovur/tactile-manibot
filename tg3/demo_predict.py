@@ -24,19 +24,48 @@ def run_live_loop(sensor, pose_model, contact_model, num_iterations=10000):
 
     # ros2.shutdown()
 
+## WINDOWS CAMERA
+# class RealSensor:
+#     def __init__(self, sensor_params={}):
+#         self.sensor_params = sensor_params
+#         source = sensor_params.get('source', 0)
+#         exposure = sensor_params.get('exposure', -7)
 
+#         self.cam = cv2.VideoCapture(source)
+#         self.cam.set(cv2.CAP_PROP_EXPOSURE, exposure)
+#         for _ in range(5):
+#             self.cam.read()  # Hack - initial camera transient
+
+#     def read(self):
+#         _, img = self.cam.read()
+#         return img
+
+#     def process(self, outfile=None):
+#         img = transform_image(self.read(), **self.sensor_params)
+#         if outfile:
+#             cv2.imwrite(outfile, img)
+#         return img
+    
+## LINUX CAMERA
 class RealSensor:
     def __init__(self, sensor_params={}):
         self.sensor_params = sensor_params
         source = sensor_params.get('source', 0)
-        exposure = sensor_params.get('exposure', -7)
-
         self.cam = cv2.VideoCapture(source)
-        self.cam.set(cv2.CAP_PROP_EXPOSURE, exposure)
+        exposure_win=sensor_params.get('exposure', -7) 
+        v4l2_exposure = (2.0 ** exposure_win) * 1e6 / 100.0  # 100-µs ticks
+
+        # self.cam.set(cv2.CAP_PROP_AUTO_EXPOSURE, 1)  # Linux SET TO MANUAL
+        self.cam.set(cv2.CAP_PROP_EXPOSURE, v4l2_exposure) # Linux
+        self.cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Linux buffer
+        self.cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"YUYV")) # More efficient format
+
         for _ in range(5):
-            self.cam.read()  # Hack - initial camera transient
+            self.cam.grab() # initial camera transient
 
     def read(self):
+        for _ in range(5):  # tune: 5–10 at 30 fps ≈ 167–333 ms # grab() is less computational burden than read()
+            self.cam.grab()
         _, img = self.cam.read()
         return img
 
@@ -45,7 +74,7 @@ class RealSensor:
         if outfile:
             cv2.imwrite(outfile, img)
         return img
-    
+
 
 def setup_model(in_dim, in_channels, out_dim, model_params, device='cpu'):
     """ Import CNN model """
