@@ -148,18 +148,3 @@ def transform_matrix_offset_center(matrix, x, y):
     offset_matrix = np.array([[1, 0, o_x], [0, 1, o_y], [0, 0, 1]])
     reset_matrix = np.array([[1, 0, -o_x], [0, 1, -o_y], [0, 0, 1]])
     return np.dot(np.dot(offset_matrix, matrix), reset_matrix)
-
-
-def camera_loop(camera,
-    image_processing_kwargs, display_name='processed_image', display_size=(640,480)
-):
-    cv2.namedWindow(display_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(display_name, *display_size)
-
-    while True:
-        image = camera.process()
-        processed_image = transform_image(image, **image_processing_kwargs)
-        cv2.imshow(display_name, processed_image)
-        if cv2.waitKey(10)==27:  # Esc key to stop
-            break
-
