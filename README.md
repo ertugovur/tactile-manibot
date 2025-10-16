@@ -37,7 +37,12 @@ uv sync
 Run from within VScode or from command line:
 
 ```sh
-python demo_predict.py
+python demo_predict.py -s sensor_name -source camera_source 
 ```
 
-To use ROS2 version, uncomment ROS2 lines in this code
+sensor names: 
+robotiq_1,robotiq_2,robotiq_end_1,robotiq_end_2,airport_1,airport_2
+
+camera_source default is 0, check which channel (camera_source) is used on /dev/videoX. 
+For example, run ffplay /dev/video0 and confirm that is the correct tactile image. 
+

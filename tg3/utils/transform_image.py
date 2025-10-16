@@ -163,3 +163,23 @@ def camera_loop(camera,
         if cv2.waitKey(10)==27:  # Esc key to stop
             break
 
+
+if __name__ == '__main__':
+
+    from data.utils.embodiment import RealSensor
+
+    sensor_params = {'source': 1}
+
+    camera = RealSensor(sensor_params)
+
+    image_processing_params = {
+        'gray': False,
+        'bbox': None,
+        'dims': None,
+        'stdiz': False,
+        'normlz': False,
+        'thresh': [11, -30],
+        'circle_mask_radius': None,
+    }
+
+    camera_loop(camera, image_processing_params)
