@@ -37,12 +37,12 @@ uv sync
 Run from within VScode or from command line:
 
 ```sh
-python demo_predict.py -s sensor_name -source camera_source 
+uv run python tg3/utils/demo_predict.py -s sensor_name -source camera_source 
 ```
 
 sensor names: 
 robotiq_1,robotiq_2,robotiq_end_1,robotiq_end_2,airport_1,airport_2
 
-camera_source default is 0, check which channel (camera_source) is used on /dev/videoX. 
+camera_source default is 0, check which channel (X) is used on /dev/videoX. 
 For example, run ffplay /dev/video0 and confirm that is the correct tactile image. 
 
