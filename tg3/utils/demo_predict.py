@@ -6,7 +6,7 @@ from tg3.utils.transform_image import transform_image
 from tg3.utils.labeller import RegressionLabeller, LabelledModel
 from tg3.utils.contact_model import ContactModel
 from tg3.utils.NNmodels import CNN, NatureCNN, ResNet, ResidualBlock
-# import tg3.tasks.utils.ros2_handler as ros2
+# import tg3.utils.ros2_handler as ros2
 
 import torch 
 import os
@@ -34,7 +34,7 @@ class RealSensor:
         self.sensor_params = sensor_params
         source = sensor_params.get('source', 0)
         self.cam = cv2.VideoCapture(source)
-        
+
         # windows settings: 
         # exposure = sensor_params.get('exposure', -7)
         # self.cam.set(cv2.CAP_PROP_EXPOSURE, exposure)
