@@ -1,0 +1,1 @@
+{"seed": 42, "batch_size": 16, "n_epochs": 20, "shuffle": true, "n_cpu": 1, "lr": 0.0001, "factor": 0.5, "patience": 10, "decay": 1e-06, "b1": 0.9, "b2": 0.999}

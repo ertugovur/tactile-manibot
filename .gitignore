@@ -4,7 +4,7 @@
 .vscode
 __pycache__/
 requirements.txt
-tactile_data/
+# tactile_data/
 saved_models
 temp/
 
