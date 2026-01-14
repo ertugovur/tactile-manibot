@@ -6,7 +6,7 @@ from tg3.utils.transform_image import transform_image
 from tg3.utils.labeller import RegressionLabeller, LabelledModel
 from tg3.utils.contact_model import ContactModel
 from tg3.utils.NNmodels import CNN, NatureCNN, ResNet, ResidualBlock
-# import tg3.utils.ros2_handler as ros2
+import tg3.utils.ros2_handler as ros2
 
 import torch 
 import os
@@ -26,7 +26,7 @@ def run_live_loop(sensor, pose_model, contact_model, num_iterations=10000):
         print(f"{i+1}/{num_iterations} contact={contact} | SSIM={ssim:.2f} | ", end='')
         print(f" pose={[f'{p:.1f}' for p in pred_pose[:6]]} ".replace("'",""))
 
-    # ros2.shutdown()
+    ros2.shutdown()
 
 
 class RealSensor:
@@ -123,8 +123,14 @@ def main(model_dir, source):
     sensor = RealSensor(sensor_params)
 
     model, image_proc_params, labeller = load_model(model_dir)
-    pose_model = LabelledModel(model, image_proc_params, labeller)  # , ros2_topic=ros2.publish_pose)
-    contact_model = ContactModel()  # ros2_topic=ros2.publish_contact)
+
+    # To disable ROS2:
+    # pose_model = LabelledModel(model, image_proc_params, labeller)  # , ros2_topic=ros2.publish_pose)
+    # contact_model = ContactModel()  # ros2_topic=ros2.publish_contact)
+
+    # To enable ROS2:
+    pose_model = LabelledModel(model, image_proc_params, labeller, ros2_topic=ros2.publish_pose)  # )
+    contact_model = ContactModel(ros2_topic=ros2.publish_contact)  # ros2_topic=ros2.publish_contact)
 
     run_live_loop(sensor, pose_model, contact_model)
 
@@ -143,6 +149,9 @@ if __name__ == "__main__":
         help="Camera source index (default: 0)",
     )
     args = parser.parse_args()
+
+    ros2.set_namespace(args.s) # namespace for ROS2 topics
+
 
     model_dir = f'./tactile_data/ur_{args.s}/surface_zRxy_shear/regress_pose_zRxy/simple_cnn'
     if not os.path.isdir(model_dir):

@@ -8,18 +8,25 @@ from std_msgs.msg import Bool, Float32, Float32MultiArray, MultiArrayLayout, Mul
 
 
 _node = None
+_namespace = "tactile"   # default
+
+def set_namespace(namespace: str):
+    global _namespace
+    _namespace = namespace
+
 
 class TactilePubNode(Node):
     def __init__(self):
-        super().__init__('TactilePubNode')
-        self.contact = self.create_publisher(Bool, 'tactile/contact', 10)
-        self.ssim = self.create_publisher(Float32, 'tactile/ssim', 10)
-        self.pose = self.create_publisher(Float32MultiArray, 'tactile/pose', 10)
+        super().__init__(f'TactilePubNode_{_namespace}')
+        self.contact = self.create_publisher(Bool, f'{_namespace}/contact', 10)
+        self.ssim    = self.create_publisher(Float32, f'{_namespace}/ssim', 10)
+        self.pose    = self.create_publisher(Float32MultiArray, f'{_namespace}/pose', 10)
 
 def _ensure_node():
     global _node
     if _node is None:
-        rclpy.init(args=None)
+        if not rclpy.ok():
+            rclpy.init(args=None)
         _node = TactilePubNode()
 
 def publish_pose(pose_dict):
